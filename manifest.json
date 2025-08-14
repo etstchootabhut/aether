@@ -1,0 +1,21 @@
+{
+  "name": "Aetherion",
+  "short_name": "Ather",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#6366f1",
+  "theme_color": "#000000",
+  "description": "A simple HTML app from for character building",
+  "icons": [
+    {
+      "src": "anrgy dragon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "anrgy dragon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
