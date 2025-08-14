@@ -1,7 +1,7 @@
 {
   "name": "Aetherion",
   "short_name": "Ather",
-  "start_url": "/index.html",
+  "start_url": "/aether",
   "display": "standalone",
   "background_color": "#6366f1",
   "theme_color": "#000000",
@@ -19,3 +19,4 @@
     }
   ]
 }
+
