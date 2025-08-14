@@ -119,7 +119,8 @@
 .timeline-event-card {
     position: relative; /* This is the key change */
     padding-top: 2.5rem; /* Add space for the buttons */
-    background-color: purple;
+    background-color: #1f2937;
+    border: 1px solid #374151;
     border-radius: 5px;
     margin-top: 10px;
     text-align: center;
@@ -285,15 +286,24 @@
     </div>
 
     <!-- Story Weaver Templates -->
-    <template id="character-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
-    <template id="place-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
-    <template id="creature-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
-    <template id="item-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
+    <!-- The New Universal Card Template -->
+<template id="entity-card-template">
+    <div class="entity-card p-4 flex flex-col justify-between">
+        <div>
+            <div class="entity-card-primary font-bold text-lg truncate"></div>
+            <div class="entity-card-secondary text-sm text-gray-400 mt-1 truncate"></div>
+        </div>
+        <div class="card-actions self-end mt-4" style="margin-top: 0;">
+            <button class="edit-entity-btn"><i data-feather="edit-2"></i></button>
+            <button class="delete-entity-btn"><i data-feather="trash-2"></i></button>
+        </div>
+    </div>
+</template>
     <template id="event-card-template"><div class="timeline-event-card"><div class="timeline-date"></div><div class="timeline-details"><h3 class="timeline-title"></h3><p class="timeline-description"></p><div class="timeline-meta"></div></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
-    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Character Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
-    <template id="place-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Place Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div class="form-grid-span-2"><label>Type</label><input type="text" name="type" placeholder="e.g., City, Forest, Ruin"></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>History</label><textarea name="history" rows="4"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Place</span></button></form></div></template>
-    <template id="creature-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Creature Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Mammal, Mythical"></div><div><label>Habitat</label><select name="habitat"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>Abilities</label><textarea name="abilities" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Creature</span></button></form></div></template>
-    <template id="item-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Item Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Weapon, Potion, Key"></div><div><label>Current Holder</label><select name="holder"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Properties/Abilities</label><textarea name="properties" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Item</span></button></form></div></template>
+    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><div class="form-grid"><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
+    <template id="place-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><div class="form-grid"><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div class="form-grid-span-2"><label>Type</label><input type="text" name="type" placeholder="e.g., City, Forest, Ruin"></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>History</label><textarea name="history" rows="4"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Place</span></button></form></div></template>
+    <template id="creature-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><div class="form-grid"><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Mammal, Mythical"></div><div><label>Habitat</label><select name="habitat"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>Abilities</label><textarea name="abilities" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Creature</span></button></form></div></template>
+    <template id="item-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><div class="form-grid"><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Weapon, Potion, Key"></div><div><label>Current Holder</label><select name="holder"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Properties/Abilities</label><textarea name="properties" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Item</span></button></form></div></template>
     <template id="event-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><div class="form-grid"><div class="form-grid-span-2"><label>Date/Time</label><input type="text" name="date" placeholder="e.g., Year 10, Day 5" required></div><div class="form-grid-span-2"><label>Title</label><input type="text" name="title" required></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="5"></textarea></div><div class="form-grid-span-2"><label>Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Participants</label><div id="participants-container"></div><button type="button" id="add-participant-btn"><i data-feather="plus"></i> Add Participant</button></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Event</span></button></form></div></template>
     <template id="new-arc-form-template"><div class="form-wrapper"><div class="form-header"><h2>Create New Arc</h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form id="new-arc-form" class="entity-form"><div class="form-grid"><div class="form-grid-span-2"><label>Arc Title</label><input type="text" name="title" required></div></div><button type="submit" class="save-btn"><i data-feather="plus"></i><span>Create Arc</span></button></form></div></template>
     
@@ -561,86 +571,162 @@ window.addEventListener('beforeinstallprompt', (e) => {
             renderTabContent('characters');
         };
 
-        const renderTabContent = (type) => {
-            arcContent.innerHTML = '';
-            document.querySelectorAll('#arc-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.type === type));
-            const config = ENTITY_CONFIG[type];
-            if (!config) return;
+        // REPLACE your existing renderTabContent function with this one.
 
-            const items = database.arcs[currentArcId][type] || {};
-            const header = document.createElement('div');
-            header.innerHTML = `<button class="create-new-entity-btn" data-type="${type}"><i data-feather="plus"></i> Create New ${config.title}</button>`;
-            arcContent.appendChild(header);
+// REPLACE your existing renderTabContent function with this one.
 
-            const listContainer = document.createElement('div');
-            listContainer.className = (type === 'timeline') ? 'flex flex-col gap-4' : 'entity-list';
-            if (Object.keys(items).length === 0) {
-                listContainer.innerHTML = `<div class="empty-state col-span-full"><i data-feather="search"></i><p>No ${type} found. Click the button above to create one!</p></div>`;
-            } else {
-                const cardTemplate = document.getElementById(`${config.singular}-card-template`);
-                Object.values(items).forEach(item => {
-                    const cardClone = cardTemplate.content.cloneNode(true);
-                    const cardEl = cardClone.firstElementChild;
-                    cardEl.dataset.id = item.id;
-                    cardEl.querySelector('.edit-entity-btn').dataset.id = item.id;
-                    cardEl.querySelector('.edit-entity-btn').dataset.type = type;
-                    cardEl.querySelector('.delete-entity-btn').dataset.id = item.id;
-                    cardEl.querySelector('.delete-entity-btn').dataset.type = type;
+const renderTabContent = (type) => {
+    arcContent.innerHTML = '';
+    document.querySelectorAll('#arc-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.type === type));
+    const config = ENTITY_CONFIG[type];
+    if (!config) return;
 
-                    if (type !== 'timeline') {
-                        cardEl.querySelector('.entity-card-img').src = item.imageData || PLACEHOLDER_IMG;
-                        cardEl.querySelector('.entity-card-name').textContent = item.name;
-                    } else {
-                        cardEl.querySelector('.timeline-date').textContent = item.date || 'N/A';
-                        cardEl.querySelector('.timeline-title').textContent = item.title;
-                        cardEl.querySelector('.timeline-description').textContent = item.description;
-                        const metaEl = cardEl.querySelector('.timeline-meta');
-                        let metaHTML = '';
-                        if (item.location) metaHTML += `<div><strong>Location:</strong> ${item.location}</div>`;
-                        if (item.participants && item.participants.length > 0) metaHTML += `<div><strong>Participants:</strong> ${item.participants.join(', ')}</div>`;
-                        metaEl.innerHTML = metaHTML;
-                    }
-                    listContainer.appendChild(cardClone);
-                });
-            }
-            arcContent.appendChild(listContainer);
+    const items = database.arcs[currentArcId][type] || {};
+    const header = document.createElement('div');
+    header.innerHTML = `<button class="create-new-entity-btn" data-type="${type}"><i data-feather="plus"></i> Create New ${config.title}</button>`;
+    arcContent.appendChild(header);
+
+    const listContainer = document.createElement('div');
+    if (Object.keys(items).length === 0) {
+        listContainer.innerHTML = `<div class="empty-state col-span-full"><i data-feather="search"></i><p>No ${type} found.</p></div>`;
+    } else {
+        if (type === 'timeline') {
+            listContainer.className = 'timeline-list';
+            const cardTemplate = document.getElementById('event-card-template');
+            Object.values(items).forEach(item => {
+                const cardClone = cardTemplate.content.cloneNode(true);
+                const cardEl = cardClone.firstElementChild;
+                cardEl.querySelector('.timeline-date').textContent = item.date || 'N/A';
+                cardEl.querySelector('.timeline-title').textContent = item.title;
+                cardEl.querySelector('.timeline-description').textContent = item.description;
+                
+                const metaEl = cardEl.querySelector('.timeline-meta');
+                let metaHTML = '';
+                if (item.location) metaHTML += `<div><strong>Location:</strong> ${item.location}</div>`;
+                if (item.participants && item.participants.length > 0) metaHTML += `<div><strong>Participants:</strong> ${JSON.parse(item.participants).join(', ')}</div>`;
+                metaEl.innerHTML = metaHTML;
+
+                cardEl.dataset.id = item.id;
+                cardEl.querySelector('.edit-entity-btn').dataset.id = item.id;
+                cardEl.querySelector('.edit-entity-btn').dataset.type = type;
+                cardEl.querySelector('.delete-entity-btn').dataset.id = item.id;
+                cardEl.querySelector('.delete-entity-btn').dataset.type = type;
+                listContainer.appendChild(cardClone);
+            });
+        } else {
+            listContainer.className = 'entity-list';
+            const cardTemplate = document.getElementById('entity-card-template'); // Using the universal template
+            Object.values(items).forEach(item => {
+                const cardClone = cardTemplate.content.cloneNode(true);
+                const cardEl = cardClone.firstElementChild;
+                
+                const primaryTextEl = cardEl.querySelector('.entity-card-primary');
+                const secondaryTextEl = cardEl.querySelector('.entity-card-secondary');
+                primaryTextEl.textContent = item.name || 'Unnamed';
+
+                let secondaryText = 'No details';
+                switch (type) {
+                    case 'characters': secondaryText = item.role || 'No role specified'; break;
+                    case 'creatures': secondaryText = item.abilities || 'No abilities listed'; break;
+                    case 'places': case 'items': secondaryText = item.type || 'No type specified'; break;
+                }
+                secondaryTextEl.textContent = secondaryText;
+
+                cardEl.dataset.id = item.id;
+                cardEl.querySelector('.edit-entity-btn').dataset.id = item.id;
+                cardEl.querySelector('.edit-entity-btn').dataset.type = type;
+                cardEl.querySelector('.delete-entity-btn').dataset.id = item.id;
+                cardEl.querySelector('.delete-entity-btn').dataset.type = type;
+                listContainer.appendChild(cardClone);
+            });
+        }
+    }
+    
+    arcContent.appendChild(listContainer);
+    feather.replace();
+};
+
+        // REPLACE your existing renderForm function with this one.
+
+// REPLACE your existing renderForm function with this one.
+
+const renderForm = (type, entityId = null) => {
+    const config = ENTITY_CONFIG[type];
+    const formTemplate = document.getElementById(`${config.singular}-form-template`);
+    const formClone = formTemplate.content.cloneNode(true);
+    const form = formClone.querySelector('form');
+    const header = formClone.querySelector('h2');
+    const saveBtn = formClone.querySelector('.save-btn span');
+    const arcData = database.arcs[currentArcId];
+    
+    // **THE FIX IS HERE**: Get the specific entity we are editing at the beginning.
+    const entity = entityId ? arcData[type][entityId] : null;
+
+    header.textContent = entityId ? `Edit ${config.title}` : `Create ${config.title}`;
+    if (saveBtn) saveBtn.textContent = `Save ${config.title}`;
+    form.dataset.type = type;
+
+    const selects = { location: arcData.places, habitat: arcData.places, holder: arcData.characters };
+    Object.keys(selects).forEach(name => {
+        const selectEl = form.querySelector(`select[name="${name}"]`);
+        if (selectEl) {
+            selectEl.innerHTML = `<option value="">-- None --</option>`;
+            Object.values(selects[name] || {}).forEach(opt => {
+                selectEl.innerHTML += `<option value="${opt.name}">${opt.name}</option>`;
+            });
+        }
+    });
+
+    if (type === 'timeline') {
+        const participantsContainer = form.querySelector('#participants-container');
+        const addParticipantBtn = form.querySelector('#add-participant-btn');
+
+        const createParticipantRow = (selectedParticipant = '') => {
+            const row = document.createElement('div');
+            row.className = 'participant-row';
+            const select = document.createElement('select');
+            select.name = 'participants';
+            select.innerHTML = '<option value="">-- Select Character --</option>';
+            Object.values(arcData.characters || {}).forEach(char => {
+                select.innerHTML += `<option value="${char.name}" ${selectedParticipant === char.name ? 'selected' : ''}>${char.name}</option>`;
+            });
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = '<i data-feather="x"></i>';
+            removeBtn.addEventListener('click', () => row.remove());
+
+            row.appendChild(select);
+            row.appendChild(removeBtn);
+            participantsContainer.appendChild(row);
             feather.replace();
         };
 
-        const renderForm = (type, entityId = null) => {
-            const config = ENTITY_CONFIG[type];
-            const formTemplate = document.getElementById(`${config.singular}-form-template`);
-            const formClone = formTemplate.content.cloneNode(true);
-            const form = formClone.querySelector('form');
-            const header = formClone.querySelector('h2');
-            const saveBtn = formClone.querySelector('.save-btn span');
-            const arcData = database.arcs[currentArcId];
+        addParticipantBtn.addEventListener('click', () => createParticipantRow());
 
-            header.textContent = entityId ? `Edit ${config.title}` : `Create ${config.title}`;
-            if(saveBtn) saveBtn.textContent = `Save ${config.title}`;
-            form.dataset.type = type;
-
-            const selects = { location: arcData.places, habitat: arcData.places, holder: arcData.characters };
-            Object.keys(selects).forEach(name => {
-                const selectEl = form.querySelector(`select[name="${name}"]`);
-                if (selectEl) {
-                    selectEl.innerHTML = `<option value="">-- None --</option>`;
-                    Object.values(selects[name] || {}).forEach(opt => {
-                        const isSelected = entityId && arcData[type][entityId] && arcData[type][entityId][name] === opt.name ? 'selected' : '';
-                        selectEl.innerHTML += `<option value="${opt.name}" ${isSelected}>${opt.name}</option>`;
-                    });
+        // Now we correctly use the 'entity' variable to load existing participants.
+        if (entity && entity.participants) {
+            try {
+                const participants = JSON.parse(entity.participants);
+                if (Array.isArray(participants)) {
+                    participants.forEach(p => createParticipantRow(p));
                 }
-            });
-            
-            if (entityId) {
-                const entity = arcData[type][entityId];
-                Object.keys(entity).forEach(key => { if (form.elements[key]) form.elements[key].value = entity[key]; });
+            } catch (e) { console.error("Could not parse participants", e); }
+        }
+    }
+    
+    // Populate the rest of the form with existing data if we are editing.
+    if (entity) {
+        Object.keys(entity).forEach(key => {
+            if (form.elements[key] && key !== 'participants') {
+                form.elements[key].value = entity[key];
             }
+        });
+    }
 
-            setupImageUploader(form);
-            openModal(formClone);
-            form.querySelectorAll('textarea').forEach(el => { autoResizeTextarea(el); el.addEventListener('input', () => autoResizeTextarea(el)); });
-        };
+    openModal(formClone);
+    form.querySelectorAll('textarea').forEach(el => { autoResizeTextarea(el); el.addEventListener('input', () => autoResizeTextarea(el)); });
+};
         
         // --- Combined Event Delegation ---
         const handleAppClick = (e) => {
@@ -731,42 +817,52 @@ window.addEventListener('beforeinstallprompt', (e) => {
             }
         };
 
-        const handleAppSubmit = (e) => {
-            e.preventDefault();
-            const form = e.target;
+        // REPLACE your existing handleAppSubmit function with this one.
 
-            if (form.id === 'new-arc-form') {
-                const title = form.querySelector('input[name="title"]').value;
-                if (title && title.trim()) {
-                    const newArcId = `arc_${Date.now()}`;
-                    database.arcs[newArcId] = { id: newArcId, title: title.trim(), characters: {}, places: {}, creatures: {}, items: {}, timeline: {} };
-                    saveDatabase();
-                    renderDashboard();
-                    closeModal();
-                }
-                return;
+const handleAppSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    if (form.id === 'new-arc-form') {
+        const title = form.querySelector('input[name="title"]').value;
+        if (title && title.trim()) {
+            const newArcId = `arc_${Date.now()}`;
+            database.arcs[newArcId] = { id: newArcId, title: title.trim(), characters: {}, places: {}, creatures: {}, items: {}, timeline: {} };
+            saveDatabase();
+            renderDashboard();
+            closeModal();
+        }
+        return;
+    }
+
+    if (form.classList.contains('entity-form')) {
+        const type = form.dataset.type;
+        const config = ENTITY_CONFIG[type];
+        const formData = new FormData(form);
+        
+        // **THE FIX for Timeline Participants is here**
+        if (type === 'timeline') {
+            const participants = Array.from(form.querySelectorAll('.participant-row select')).map(select => select.value).filter(p => p);
+            // We store the participants as a JSON string
+            formData.set('participants', JSON.stringify(participants));
+        }
+
+        const data = Object.fromEntries(formData.entries());
+        let id = data.id;
+
+        if (!id) {
+            id = `${config.singular}_${Date.now()}`;
+            data.id = id;
+            if (!database.arcs[currentArcId][type]) {
+                database.arcs[currentArcId][type] = {};
             }
-
-            if (form.classList.contains('entity-form')) {
-                const type = form.dataset.type;
-                const config = ENTITY_CONFIG[type];
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-                let id = data.id;
-
-                if (id) {
-                    database.arcs[currentArcId][type][id] = data;
-                } else {
-                    id = `${config.singular}_${Date.now()}`;
-                    data.id = id;
-                    if (!database.arcs[currentArcId][type]) database.arcs[currentArcId][type] = {};
-                    database.arcs[currentArcId][type][id] = data;
-                }
-                saveDatabase();
-                closeModal();
-                renderTabContent(type);
-            }
-        };
+        }
+        database.arcs[currentArcId][type][id] = data;
+        saveDatabase();
+        closeModal();
+        renderTabContent(type);
+    }
+};
 
         // --- Combined Initialization ---
         const init = () => {
