@@ -290,16 +290,7 @@
     <template id="creature-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
     <template id="item-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
     <template id="event-card-template"><div class="timeline-event-card"><div class="timeline-date"></div><div class="timeline-details"><h3 class="timeline-title"></h3><p class="timeline-description"></p><div class="timeline-meta"></div></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
-    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><!-- REPLACE the existing .image-uploader div with this -->
-<div class="form-grid-span-2">
-    <label>Character Images</label>
-    <!-- Your new file input -->
-    <input type="file" name="imageUpload" class="file-input" multiple accept="image/*">
-    <!-- Your new preview area -->
-    <div id="image-preview" class="mt-2 grid grid-cols-3 gap-2"></div>
-    <!-- Hidden input to store the image URLs from Firebase -->
-    <input type="hidden" name="imageData">
-</div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
+    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Character Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
     <template id="place-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Place Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div class="form-grid-span-2"><label>Type</label><input type="text" name="type" placeholder="e.g., City, Forest, Ruin"></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>History</label><textarea name="history" rows="4"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Place</span></button></form></div></template>
     <template id="creature-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Creature Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Mammal, Mythical"></div><div><label>Habitat</label><select name="habitat"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>Abilities</label><textarea name="abilities" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Creature</span></button></form></div></template>
     <template id="item-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Item Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Weapon, Potion, Key"></div><div><label>Current Holder</label><select name="holder"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Properties/Abilities</label><textarea name="properties" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Item</span></button></form></div></template>
@@ -395,48 +386,25 @@ window.addEventListener('beforeinstallprompt', (e) => {
             textarea.style.height = `${textarea.scrollHeight}px`; 
         };
 
-        // REPLACE your old setupImageUploader function with this new one
-
-const setupImageUploader = (form) => {
-    const fileInput = form.querySelector('input[name="imageUpload"]');
-    const previewContainer = form.querySelector('#image-preview');
-    const imageDataInput = form.querySelector('input[name="imageData"]');
-
-    if (!fileInput || !previewContainer || !imageDataInput) return;
-
-    // Display existing images when editing
-    if (imageDataInput.value) {
-        const urls = imageDataInput.value.split(',');
-        urls.forEach(url => {
-            if (url) {
-                const img = document.createElement('img');
-                img.src = url;
-                img.className = 'w-full h-auto object-cover rounded-md';
-                previewContainer.appendChild(img);
-            }
-        });
-    }
-
-    // Your new preview logic is here
-    fileInput.addEventListener('change', () => {
-        previewContainer.innerHTML = ''; // Clear previous previews
-        const files = fileInput.files;
-
-        if (files.length > 5) {
-            alert("You can upload a maximum of 5 images.");
-            fileInput.value = ""; // Clear the selection
-            return;
-        }
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.className = 'w-full h-auto object-cover rounded-md';
-            previewContainer.appendChild(img);
-        }
-    });
-};
+        const setupImageUploader = (form) => {
+            const uploader = form.querySelector('.image-uploader');
+            if (!uploader) return;
+            const previewWrapper = uploader.querySelector('.image-preview-wrapper');
+            const previewImg = uploader.querySelector('.image-preview');
+            const fileInput = uploader.querySelector('.file-input');
+            const dataInput = form.querySelector('input[name="imageData"]');
+            previewImg.src = dataInput.value || PLACEHOLDER_IMG;
+            previewWrapper.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) { alert('Image is too large! Please choose a file under 2MB.'); return; }
+                    const reader = new FileReader();
+                    reader.onload = e => { previewImg.src = e.target.result; dataInput.value = e.target.result; };
+                    reader.readAsDataURL(file);
+                }
+            });
+        };
 
         // --- Nexus AI Chat Functions ---
         function addMessage(sender, content, isHtml = false) {
