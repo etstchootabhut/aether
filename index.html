@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Weaver</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Story Weaver Base Styles */
+        :root {
+            --primary-color: #c026d3; --primary-glow: rgba(192, 38, 211, 0.2);
+            --secondary-color: #4f46e5; --background-color: #111827;
+            --surface-color: #1f2937; --surface-hover: #374151;
+            --text-color: #e5e7eb; --gray-text-color: #9ca3af;
+            --border-color: #374151; --danger-color: #f43f5e;
+            --font-sans: 'Inter', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-sans); background-color: var(--background-color); color: var(--text-color); line-height: 1.6; }
+        .hidden { display: none !important; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; background-color: var(--surface-color); border-bottom: 1px solid var(--border-color); }
+        header > div { display: flex; gap: 0.75rem; }
+        h1 { color: var(--text-color); font-weight: 700; font-size: 1.75rem; }
+        h1:first-letter { color: var(--primary-color); }
+        button { cursor: pointer; border: none; font-family: var(--font-sans); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        button:disabled { cursor: not-allowed; opacity: 0.5; }
+        button svg { width: 16px; height: 16px; }
+        .save-btn, #new-arc-btn { background: var(--primary-color); color: white; padding: 0.6rem;}
+        .save-btn{margin-top: 10px;}
+        .save-btn:hover, #new-arc-btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
+        #ai-chat-btn { background-color: var(--surface-hover); padding: 0.6rem;}
+        #arc-tabs { padding: 0.25rem 5%; border-bottom: 1px solid var(--border-color); display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tab-btn { padding: 0.75rem 1.5rem; border-bottom: 3px solid transparent; background-color: transparent; color: var(--gray-text-color); }
+        .tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); font-weight: 700;}
+        .tab-btn:hover:not(.active) { color: var(--text-color); background-color: var(--surface-hover); }
+        #arc-content { padding: 2rem 5%; }
+        #arc-grid, .entity-list { display: grid;}
+        #arc-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .entity-list { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+        .arc-card, .entity-card { background-color: var(--surface-color); border-radius: 12px; border: 1px solid var(--border-color); transition: all 0.2s ease; }
+        .arc-card:hover, .entity-card:hover { transform: translateY(-4px); border-color: var(--primary-color); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.5); }
+        .arc-card { padding: 1.5rem; cursor: pointer; margin:10px; display: flex; flex-direction: column; justify-content: space-between; }
+        .arc-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+        .entity-card { overflow: hidden; position: relative; margin: 10px;}
+        .entity-card-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background-color: var(--background-color); }
+        .entity-card-name { padding: 1rem; font-weight: 600; text-align: center; }
+        .card-actions { position: absolute; top: 0.5rem; right: 0.5rem; display: flex; gap: 0.5rem; }
+        .edit-entity-btn, .delete-entity-btn { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: white; padding: 0.5rem; border-radius: 50%; }
+        .delete-entity-btn:hover { background-color: var(--danger-color); }
+        .empty-state { text-align: center; padding: 4rem 2rem; border: 2px dashed var(--border-color); border-radius: 12px; color: var(--gray-text-color); margin-top: 2rem; }
+        .empty-state svg { width: 48px; height: 48px; margin-bottom: 1rem; }
+        #modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; padding: 2rem; z-index: 1000; }
+        #modal-content { width: 100%; max-width: 700px; animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .form-wrapper { background-color: var(--surface-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 100%;}
+        .form-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 2rem; border-bottom: 1px solid var(--border-color); }
+        .entity-form { padding: 1.5rem 2rem 2rem; max-height: 80vh; overflow-y: auto; }
+        .entity-form::-webkit-scrollbar { display: none; }
+        .entity-form { scrollbar-width: none; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; }
+        .form-grid-span-2 { grid-column: span 2; }
+        .entity-form label { font-weight: 600; color: var(--gray-text-color); margin-bottom: 0.25rem; display: block; font-size: 0.9rem;}
+        .entity-form input, .entity-form textarea, .entity-form select { width: 100%; padding: 0.75rem 1rem; background-color: var(--background-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); font-family: var(--font-sans); font-size: 1rem; transition: all 0.2s; }
+        .entity-form input:focus, .entity-form textarea:focus, .entity-form select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-glow); }
+        textarea { resize: none; overflow-y: hidden; }
+        .image-uploader { grid-column: span 2; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .image-uploader .image-preview-wrapper { width: 100%; max-width: 250px; height: 250px; border-radius: 8px; border: 2px dashed var(--border-color); position: relative; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .image-uploader .image-preview { width: 100%; height: 100%; object-fit: cover; }
+        .image-uploader .image-upload-prompt { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s; }
+        .image-uploader .image-preview-wrapper:hover .image-upload-prompt { opacity: 1; }
+        .file-input { display: none; }
+        
+        /* Fix for Timeline Event Cards */
+.timeline-event-card {
+    position: relative; /* This is the key change */
+    padding-top: 2.5rem; /* Add space for the buttons */
+    background-color: purple;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Position the action buttons absolutely within the card */
+.timeline-event-card .card-actions {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    opacity: 1; /* Make buttons always visible */
+}
+
+/* Fix for text overflowing the chat bubble */
+#chat-messages .prose {
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* Legacy fallback */
+    word-break: break-word;
+}
+
+        /* Nexus AI Chat Styles */
+        #nexus-chat-view {
+            --background: #111827;
+            --surface-1: #1f2937;
+            --surface-2: #374151;
+            --primary: #4f46e5;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --border: #374151;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #nexus-chat-view ::-webkit-scrollbar { width: 8px; }
+        #nexus-chat-view ::-webkit-scrollbar-track { background: var(--surface-1); }
+        #nexus-chat-view ::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 4px; }
+        #nexus-chat-view ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        #chat-input {
+            resize: none;
+            overflow-y: hidden;
+        }
+        .typing-indicator span {
+            height: 10px;
+            width: 10px;
+            background-color: var(--text-secondary);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-of-type(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-of-type(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-view">
+        <header>
+            <h1 style="font-size: 30px;">Aetherion</h1>
+            <div>
+                <button id="ai-chat-btn"><i data-feather="message-circle"></i><span>AI Chat</span></button>
+                <button id="new-arc-btn"><i data-feather="plus"></i><span>Create New Arc</span></button>
+            </div>
+        </header>
+        <main id="arc-grid"></main>
+    </div>
+
+    <div id="arc-view" class="hidden">
+        <header>
+            <button id="back-to-dashboard-btn"><i data-feather="arrow-left"></i> Back to Arcs</button>
+            <h1 id="arc-title-display"></h1>
+        </header>
+        <nav id="arc-tabs">
+            <button class="tab-btn active" data-type="characters">Characters</button>
+            <button class="tab-btn" data-type="places">Places</button>
+            <button class="tab-btn" data-type="creatures">Creatures</button>
+            <button class="tab-btn" data-type="items">Items</button>
+            <button class="tab-btn" data-type="timeline">Timeline</button>
+        </nav>
+        <main id="arc-content"></main>
+    </div>
+    
+    <!-- Nexus AI Chat View -->
+    <div id="nexus-chat-view" class="hidden">
+        <div class="flex flex-col h-full w-full max-w-4xl mx-auto">
+            <header class="flex items-center justify-between p-4 border-b" style="border-color: var(--border);">
+                 <button id="back-to-weaver-btn" class="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <i data-feather="arrow-left" class="w-5 h-5 text-gray-400"></i> Back to Weaver
+                </button>
+                <div class="flex items-center space-x-3">
+                    <h1 class="text-xl font-bold text-gray-100">Aetherion AI Chat</h1>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="clear-chat-btn" title="Clear Chat" class="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <i data-feather="trash-2" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+                    <button id="settings-btn" title="Settings" class="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <i data-feather="settings" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main id="chat-messages" class="flex-1 p-4 space-y-6 overflow-y-auto"></main>
+
+            <footer class="p-4 border-t" style="border-color: var(--border);">
+                <div id="image-preview-container" class="hidden mb-2">
+                    <div class="relative inline-block">
+                        <img id="image-preview" class="h-24 rounded-lg" />
+                        <button id="remove-image-btn" class="absolute top-0 right-0 p-1 bg-gray-800 bg-opacity-75 rounded-full -mt-2 -mr-2 hover:bg-red-500">
+                            <i data-feather="x" class="w-4 h-4 text-white"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <textarea id="chat-input" placeholder="Ask anything or type /imagine to generate an image..." class="w-full py-3 pl-12 pr-20 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="1"></textarea>
+                    <button id="attach-file-btn" title="Attach file" class="absolute top-1/2 left-3 -translate-y-1/2 p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">
+                        <i data-feather="paperclip" class="w-5 h-5"></i>
+                    </button>
+                    <input type="file" id="file-input" class="hidden" accept="image/*">
+                    <button id="send-btn" class="absolute top-1/2 right-3 -translate-y-1/2 p-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed">
+                        <i data-feather="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="hidden"><div id="modal-content"></div></div>
+    
+    <!-- Settings Modal for Nexus Chat and Story Weaver -->
+    <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-75">
+        <div class="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Settings</h2>
+                <button id="close-modal-btn" class="p-1 rounded-full hover:bg-gray-700">
+                    <i data-feather="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label for="api-key-input" class="block mb-2 text-sm font-medium text-gray-300">Gemini API Key</label>
+                    <input type="password" id="api-key-input" class="w-full p-2 bg-gray-900 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your API key">
+                </div>
+                <div>
+                    <label for="model-select" class="block mb-2 text-sm font-medium text-gray-300">Select Model</label>
+                    <select id="model-select" class="w-full p-2 bg-gray-900 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="gemini-2.5-flash-preview-05-20">Gemini 2.5 Flash (Text & Vision)</option>
+                        <option value="imagen-3.0-generate-002">Imagen 3 (Image Generation)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 text-right">
+                <button id="save-settings-btn" class="px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-500">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Weaver Templates -->
+    <template id="character-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
+    <template id="place-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
+    <template id="creature-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
+    <template id="item-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
+    <template id="event-card-template"><div class="timeline-event-card"><div class="timeline-date"></div><div class="timeline-details"><h3 class="timeline-title"></h3><p class="timeline-description"></p><div class="timeline-meta"></div></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
+    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Character Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
+    <template id="place-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Place Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div class="form-grid-span-2"><label>Type</label><input type="text" name="type" placeholder="e.g., City, Forest, Ruin"></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>History</label><textarea name="history" rows="4"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Place</span></button></form></div></template>
+    <template id="creature-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Creature Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Mammal, Mythical"></div><div><label>Habitat</label><select name="habitat"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>Abilities</label><textarea name="abilities" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Creature</span></button></form></div></template>
+    <template id="item-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Item Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Weapon, Potion, Key"></div><div><label>Current Holder</label><select name="holder"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Properties/Abilities</label><textarea name="properties" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Item</span></button></form></div></template>
+    <template id="event-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><div class="form-grid"><div class="form-grid-span-2"><label>Date/Time</label><input type="text" name="date" placeholder="e.g., Year 10, Day 5" required></div><div class="form-grid-span-2"><label>Title</label><input type="text" name="title" required></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="5"></textarea></div><div class="form-grid-span-2"><label>Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Participants</label><div id="participants-container"></div><button type="button" id="add-participant-btn"><i data-feather="plus"></i> Add Participant</button></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Event</span></button></form></div></template>
+    <template id="new-arc-form-template"><div class="form-wrapper"><div class="form-header"><h2>Create New Arc</h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form id="new-arc-form" class="entity-form"><div class="form-grid"><div class="form-grid-span-2"><label>Arc Title</label><input type="text" name="title" required></div></div><button type="submit" class="save-btn"><i data-feather="plus"></i><span>Create Arc</span></button></form></div></template>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Combined State Management ---
+        let database = {};
+        let currentArcId = null;
+        let geminiApiKey = '';
+        let selectedModel = 'gemini-2.5-flash-preview-05-20';
+        let attachedFile = null;
+        let chatHistory = [];
+
+        // --- Combined DOM References ---
+        const dashboardView = document.getElementById('dashboard-view');
+        const arcView = document.getElementById('arc-view');
+        const nexusChatView = document.getElementById('nexus-chat-view');
+        const arcGrid = document.getElementById('arc-grid');
+        const arcContent = document.getElementById('arc-content');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('modal-content');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const attachFileBtn = document.getElementById('attach-file-btn');
+        const fileInput = document.getElementById('file-input');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const removeImageBtn = document.getElementById('remove-image-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const modelSelect = document.getElementById('model-select');
+        const clearChatBtn = document.getElementById('clear-chat-btn');
+        const PLACEHOLDER_IMG = 'https://via.placeholder.com/200/1f2937/9ca3af?text=No+Image';
+
+        // --- Entity Configuration ---
+        const ENTITY_CONFIG = {
+            characters: { singular: 'character', title: 'Character' },
+            places:     { singular: 'place',     title: 'Place' },
+            creatures:  { singular: 'creature',  title: 'Creature' },
+            items:      { singular: 'item',      title: 'Item' },
+            timeline:   { singular: 'event',     title: 'Event' }
+        };
+
+        // --- Core Functions ---
+        const loadDatabase = () => {
+            database = JSON.parse(localStorage.getItem('worldBuilderDB')) || { arcs: {} };
+            geminiApiKey = localStorage.getItem('geminiApiKey') || '';
+            selectedModel = localStorage.getItem('selectedModel') || 'gemini-2.5-flash-preview-05-20';
+            apiKeyInput.value = geminiApiKey;
+            modelSelect.value = selectedModel;
+        };
+        const saveDatabase = () => {
+            localStorage.setItem('worldBuilderDB', JSON.stringify(database));
+            localStorage.setItem('geminiApiKey', geminiApiKey);
+            localStorage.setItem('selectedModel', selectedModel);
+        };
+        const openModal = (contentNode) => {
+            modalContent.innerHTML = '';
+            modalContent.appendChild(contentNode);
+            modalOverlay.classList.remove('hidden');
+            feather.replace();
+        };
+        const closeModal = () => { modalOverlay.classList.add('hidden'); };
+        
+        const autoResizeTextarea = (textarea) => { 
+            if (!textarea) return; 
+            textarea.style.height = 'auto'; 
+            textarea.style.height = `${textarea.scrollHeight}px`; 
+        };
+
+        const setupImageUploader = (form) => {
+            const uploader = form.querySelector('.image-uploader');
+            if (!uploader) return;
+            const previewWrapper = uploader.querySelector('.image-preview-wrapper');
+            const previewImg = uploader.querySelector('.image-preview');
+            const fileInput = uploader.querySelector('.file-input');
+            const dataInput = form.querySelector('input[name="imageData"]');
+            previewImg.src = dataInput.value || PLACEHOLDER_IMG;
+            previewWrapper.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) { alert('Image is too large! Please choose a file under 2MB.'); return; }
+                    const reader = new FileReader();
+                    reader.onload = e => { previewImg.src = e.target.result; dataInput.value = e.target.result; };
+                    reader.readAsDataURL(file);
+                }
+            });
+        };
+
+        // --- Nexus AI Chat Functions ---
+        function addMessage(sender, content, isHtml = false) {
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = `flex items-start gap-3 ${sender === 'user' ? 'justify-end' : ''}`;
+    
+    const iconClass = sender === 'user' ? 'user' : 'cpu';
+    const iconColor = sender === 'user' ? 'text-white' : 'text-indigo-400';
+    const bgColor = sender === 'user' ? 'bg-indigo-600' : 'bg-gray-800';
+    const roundedCorner = sender === 'user' ? 'rounded-tr-none' : 'rounded-tl-none';
+
+    // ** FIX IS HERE: Parse AI content as Markdown **
+    let finalContent;
+    if (sender === 'ai' && !isHtml) {
+        // Use the marked.js library to convert Markdown to HTML
+        finalContent = marked.parse(content); 
+    } else if (isHtml) {
+        // Keep existing HTML content as is (for images/typing indicator)
+        finalContent = content;
+    } else {
+        // Regular user message (no parsing needed)
+        finalContent = `<p class="text-sm">${content}</p>`;
+    }
+
+    let messageHTML = `<div class="prose prose-invert max-w-none p-4 rounded-lg ${roundedCorner} ${bgColor}">${finalContent}</div>`;
+    
+    const iconHTML = `<div class="p-2 bg-gray-700 rounded-full"><i data-feather="${iconClass}" class="w-5 h-5 ${iconColor}"></i></div>`;
+
+    if (sender === 'user') {
+        messageWrapper.innerHTML = messageHTML + iconHTML;
+    } else {
+        messageWrapper.innerHTML = iconHTML + messageHTML;
+    }
+    
+    chatMessages.appendChild(messageWrapper);
+    feather.replace();
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return messageWrapper;
+}
+
+        function showTypingIndicator() {
+            const indicator = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+            return addMessage('ai', indicator, true);
+        }
+        
+        function removeTypingIndicator(indicatorElement) {
+            if (indicatorElement) chatMessages.removeChild(indicatorElement);
+        }
+
+        async function handleSend() {
+            const prompt = chatInput.value.trim();
+            if (!prompt && !attachedFile) return;
+
+            let userMessageContent = `<p class="text-sm">${prompt}</p>`;
+            if (attachedFile) userMessageContent += `<img src="${attachedFile.base64}" class="mt-2 rounded-lg max-w-xs"/>`;
+            addMessage('user', userMessageContent, true);
+            
+            const userParts = [{ text: prompt }];
+            if (attachedFile) userParts.push({ inlineData: { mimeType: attachedFile.type, data: attachedFile.base64.split(',')[1] } });
+            chatHistory.push({ role: "user", parts: userParts });
+
+            chatInput.value = '';
+            autoResizeTextarea(chatInput);
+            resetAttachment();
+            sendBtn.disabled = true;
+
+            const typingIndicator = showTypingIndicator();
+
+            try {
+                let isImageGeneration = prompt.toLowerCase().startsWith('/imagine');
+                let responseText = isImageGeneration ? await generateImage(prompt.substring(8).trim()) : await generateText(prompt);
+                removeTypingIndicator(typingIndicator);
+                addMessage('ai', responseText, isImageGeneration);
+                chatHistory.push({ role: "model", parts: [{ text: responseText }] });
+            } catch (error) {
+                console.error("API Error:", error);
+                removeTypingIndicator(typingIndicator);
+                addMessage('ai', `Sorry, an error occurred: ${error.message}`);
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+        
+        async function generateText(prompt) {
+            const modelToUse = attachedFile ? 'gemini-2.5-flash-preview-05-20' : selectedModel;
+            const payload = { contents: chatHistory };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:generateContent?key=${geminiApiKey}`;
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error((await response.json()).error.message);
+            const result = await response.json();
+            return result.candidates[0].content.parts[0].text;
+        }
+        
+        async function generateImage(prompt) {
+            const payload = { instances: [{ prompt }], parameters: { "sampleCount": 1 } };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${geminiApiKey}`;
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error((await response.json()).error.message);
+            const result = await response.json();
+            const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+            return `<img src="${imageUrl}" class="rounded-lg max-w-md" alt="${prompt}">`;
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    attachedFile = { base64: e.target.result, name: file.name, type: file.type };
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.classList.remove('hidden');
+                    sendBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function resetAttachment() {
+            attachedFile = null;
+            fileInput.value = '';
+            imagePreview.src = '';
+            imagePreviewContainer.classList.add('hidden');
+        }
+
+        // --- Rendering Functions (Story Weaver) ---
+        const renderDashboard = () => {
+            arcGrid.innerHTML = '';
+            const arcs = Object.values(database.arcs);
+            if (arcs.length === 0) {
+                arcGrid.innerHTML = `<div class="empty-state"><i data-feather="book-open"></i><p>Your library is empty. Create your first Arc to begin!</p></div>`;
+            } else {
+                arcs.forEach(arc => {
+                    const charCount = arc.characters ? Object.keys(arc.characters).length : 0;
+                    const card = document.createElement('div');
+                    card.className = 'arc-card';
+                    card.dataset.id = arc.id;
+                    card.innerHTML = `
+                        <div class="font-bold text-lg">${arc.title}</div>
+                        <div class="arc-card-footer text-sm text-gray-400">
+                            <span>${charCount} Characters</span>
+                            <button class="delete-arc-btn" data-id="${arc.id}"><i data-feather="trash-2"></i></button>
+                        </div>`;
+                    arcGrid.appendChild(card);
+                });
+            }
+            feather.replace();
+        };
+
+        const renderArcView = (arcId) => {
+            currentArcId = arcId;
+            document.getElementById('arc-title-display').textContent = database.arcs[arcId].title;
+            dashboardView.classList.add('hidden');
+            arcView.classList.remove('hidden');
+            renderTabContent('characters');
+        };
+
+        const renderTabContent = (type) => {
+            arcContent.innerHTML = '';
+            document.querySelectorAll('#arc-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.type === type));
+            const config = ENTITY_CONFIG[type];
+            if (!config) return;
+
+            const items = database.arcs[currentArcId][type] || {};
+            const header = document.createElement('div');
+            header.innerHTML = `<button class="create-new-entity-btn" data-type="${type}"><i data-feather="plus"></i> Create New ${config.title}</button>`;
+            arcContent.appendChild(header);
+
+            const listContainer = document.createElement('div');
+            listContainer.className = (type === 'timeline') ? 'flex flex-col gap-4' : 'entity-list';
+            if (Object.keys(items).length === 0) {
+                listContainer.innerHTML = `<div class="empty-state col-span-full"><i data-feather="search"></i><p>No ${type} found. Click the button above to create one!</p></div>`;
+            } else {
+                const cardTemplate = document.getElementById(`${config.singular}-card-template`);
+                Object.values(items).forEach(item => {
+                    const cardClone = cardTemplate.content.cloneNode(true);
+                    const cardEl = cardClone.firstElementChild;
+                    cardEl.dataset.id = item.id;
+                    cardEl.querySelector('.edit-entity-btn').dataset.id = item.id;
+                    cardEl.querySelector('.edit-entity-btn').dataset.type = type;
+                    cardEl.querySelector('.delete-entity-btn').dataset.id = item.id;
+                    cardEl.querySelector('.delete-entity-btn').dataset.type = type;
+
+                    if (type !== 'timeline') {
+                        cardEl.querySelector('.entity-card-img').src = item.imageData || PLACEHOLDER_IMG;
+                        cardEl.querySelector('.entity-card-name').textContent = item.name;
+                    } else {
+                        cardEl.querySelector('.timeline-date').textContent = item.date || 'N/A';
+                        cardEl.querySelector('.timeline-title').textContent = item.title;
+                        cardEl.querySelector('.timeline-description').textContent = item.description;
+                        const metaEl = cardEl.querySelector('.timeline-meta');
+                        let metaHTML = '';
+                        if (item.location) metaHTML += `<div><strong>Location:</strong> ${item.location}</div>`;
+                        if (item.participants && item.participants.length > 0) metaHTML += `<div><strong>Participants:</strong> ${item.participants.join(', ')}</div>`;
+                        metaEl.innerHTML = metaHTML;
+                    }
+                    listContainer.appendChild(cardClone);
+                });
+            }
+            arcContent.appendChild(listContainer);
+            feather.replace();
+        };
+
+        const renderForm = (type, entityId = null) => {
+            const config = ENTITY_CONFIG[type];
+            const formTemplate = document.getElementById(`${config.singular}-form-template`);
+            const formClone = formTemplate.content.cloneNode(true);
+            const form = formClone.querySelector('form');
+            const header = formClone.querySelector('h2');
+            const saveBtn = formClone.querySelector('.save-btn span');
+            const arcData = database.arcs[currentArcId];
+
+            header.textContent = entityId ? `Edit ${config.title}` : `Create ${config.title}`;
+            if(saveBtn) saveBtn.textContent = `Save ${config.title}`;
+            form.dataset.type = type;
+
+            const selects = { location: arcData.places, habitat: arcData.places, holder: arcData.characters };
+            Object.keys(selects).forEach(name => {
+                const selectEl = form.querySelector(`select[name="${name}"]`);
+                if (selectEl) {
+                    selectEl.innerHTML = `<option value="">-- None --</option>`;
+                    Object.values(selects[name] || {}).forEach(opt => {
+                        const isSelected = entityId && arcData[type][entityId] && arcData[type][entityId][name] === opt.name ? 'selected' : '';
+                        selectEl.innerHTML += `<option value="${opt.name}" ${isSelected}>${opt.name}</option>`;
+                    });
+                }
+            });
+            
+            if (entityId) {
+                const entity = arcData[type][entityId];
+                Object.keys(entity).forEach(key => { if (form.elements[key]) form.elements[key].value = entity[key]; });
+            }
+
+            setupImageUploader(form);
+            openModal(formClone);
+            form.querySelectorAll('textarea').forEach(el => { autoResizeTextarea(el); el.addEventListener('input', () => autoResizeTextarea(el)); });
+        };
+        
+        // --- Combined Event Delegation ---
+        const handleAppClick = (e) => {
+            const target = e.target.closest('button') || e.target;
+            
+            // View Toggling
+            if (target.id === 'ai-chat-btn') {
+                dashboardView.classList.add('hidden');
+                arcView.classList.add('hidden');
+                nexusChatView.classList.remove('hidden');
+                return;
+            }
+            if (target.id === 'back-to-weaver-btn') {
+                nexusChatView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+                return;
+            }
+            if (target.id === 'back-to-dashboard-btn') {
+                currentArcId = null;
+                arcView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+                renderDashboard();
+                return;
+            }
+
+            // Nexus Chat Listeners
+            if (target.id === 'settings-btn') settingsModal.classList.remove('hidden');
+            if (target.id === 'close-modal-btn') settingsModal.classList.add('hidden');
+            if (target.id === 'clear-chat-btn') {
+                if (confirm('Are you sure you want to clear the chat?')) {
+                    chatMessages.innerHTML = '';
+                    chatHistory = [];
+                    addMessage('ai', 'Chat history cleared.');
+                }
+            }
+            if (target.id === 'attach-file-btn') fileInput.click();
+            if (target.id === 'remove-image-btn') resetAttachment();
+
+            // Story Weaver Listeners
+            if (target.id === 'new-arc-btn') {
+                const formTemplate = document.getElementById('new-arc-form-template');
+                openModal(formTemplate.content.cloneNode(true));
+                return;
+            }
+            const arcCard = target.closest('.arc-card');
+            if (arcCard) {
+                if (target.closest('.delete-arc-btn')) {
+                    const arcId = target.closest('.delete-arc-btn').dataset.id;
+                    if (confirm(`Delete "${database.arcs[arcId].title}"? This cannot be undone.`)) {
+                        delete database.arcs[arcId];
+                        saveDatabase();
+                        renderDashboard();
+                    }
+                } else {
+                    renderArcView(arcCard.dataset.id);
+                }
+                return;
+            }
+            const tabBtn = target.closest('.tab-btn');
+            if (tabBtn) {
+                renderTabContent(tabBtn.dataset.type);
+                return;
+            }
+            const createBtn = target.closest('.create-new-entity-btn');
+            if (createBtn) {
+                renderForm(createBtn.dataset.type);
+                return;
+            }
+            const editBtn = target.closest('.edit-entity-btn');
+            if (editBtn) {
+                renderForm(editBtn.dataset.type, editBtn.dataset.id);
+                return;
+            }
+            const deleteBtn = target.closest('.delete-entity-btn');
+            if (deleteBtn) {
+                const type = deleteBtn.dataset.type;
+                const id = deleteBtn.dataset.id;
+                if (confirm(`Delete this ${ENTITY_CONFIG[type].singular}?`)) {
+                    delete database.arcs[currentArcId][type][id];
+                    saveDatabase();
+                    renderTabContent(type);
+                }
+                return;
+            }
+            if (target.closest('.modal-close-btn')) {
+                closeModal();
+                return;
+            }
+        };
+
+        const handleAppSubmit = (e) => {
+            e.preventDefault();
+            const form = e.target;
+
+            if (form.id === 'new-arc-form') {
+                const title = form.querySelector('input[name="title"]').value;
+                if (title && title.trim()) {
+                    const newArcId = `arc_${Date.now()}`;
+                    database.arcs[newArcId] = { id: newArcId, title: title.trim(), characters: {}, places: {}, creatures: {}, items: {}, timeline: {} };
+                    saveDatabase();
+                    renderDashboard();
+                    closeModal();
+                }
+                return;
+            }
+
+            if (form.classList.contains('entity-form')) {
+                const type = form.dataset.type;
+                const config = ENTITY_CONFIG[type];
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                let id = data.id;
+
+                if (id) {
+                    database.arcs[currentArcId][type][id] = data;
+                } else {
+                    id = `${config.singular}_${Date.now()}`;
+                    data.id = id;
+                    if (!database.arcs[currentArcId][type]) database.arcs[currentArcId][type] = {};
+                    database.arcs[currentArcId][type][id] = data;
+                }
+                saveDatabase();
+                closeModal();
+                renderTabContent(type);
+            }
+        };
+
+        // --- Combined Initialization ---
+        const init = () => {
+            document.addEventListener('click', handleAppClick);
+            document.addEventListener('submit', handleAppSubmit);
+            
+            sendBtn.addEventListener('click', handleSend);
+            chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
+            chatInput.addEventListener('input', () => autoResizeTextarea(chatInput));
+            fileInput.addEventListener('change', handleFileSelect);
+            saveSettingsBtn.addEventListener('click', () => {
+                geminiApiKey = apiKeyInput.value.trim();
+                selectedModel = modelSelect.value;
+                saveDatabase();
+                settingsModal.classList.add('hidden');
+                addMessage('ai', 'Settings saved successfully.');
+            });
+
+            loadDatabase();
+            renderDashboard();
+            feather.replace();
+            
+            if (chatMessages.children.length === 0) {
+                 addMessage('ai', 'Hello! How can I assist you today? You can ask me questions, request to generate an image by starting your prompt with <code class="bg-gray-900 px-1 py-0.5 rounded text-indigo-400">/imagine</code>, or upload an image to discuss.');
+            }
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
