@@ -12,7 +12,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
@@ -291,7 +290,16 @@
     <template id="creature-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
     <template id="item-card-template"><div class="entity-card"><img class="entity-card-img"><div class="entity-card-name"></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
     <template id="event-card-template"><div class="timeline-event-card"><div class="timeline-date"></div><div class="timeline-details"><h3 class="timeline-title"></h3><p class="timeline-description"></p><div class="timeline-meta"></div></div><div class="card-actions"><button class="edit-entity-btn"><i data-feather="edit-2"></i></button><button class="delete-entity-btn"><i data-feather="trash-2"></i></button></div></div></template>
-    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Character Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
+    <template id="character-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><!-- REPLACE the existing .image-uploader div with this -->
+<div class="form-grid-span-2">
+    <label>Character Images</label>
+    <!-- Your new file input -->
+    <input type="file" name="imageUpload" class="file-input" multiple accept="image/*">
+    <!-- Your new preview area -->
+    <div id="image-preview" class="mt-2 grid grid-cols-3 gap-2"></div>
+    <!-- Hidden input to store the image URLs from Firebase -->
+    <input type="hidden" name="imageData">
+</div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Age</label><input type="number" name="age" min="0"></div><div><label>Gender</label><input type="text" name="gender"></div><div class="form-grid-span-2"><label>Role</label><input type="text" name="role" placeholder="e.g., Protagonist, Mentor"></div><div class="form-grid-span-2"><label>Current Location</label><select name="location"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Personality</label><textarea name="personality" rows="3"></textarea></div><div class="form-grid-span-2"><label>Backstory</label><textarea name="backstory" rows="5"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Character</span></button></form></div></template>
     <template id="place-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Place Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div class="form-grid-span-2"><label>Type</label><input type="text" name="type" placeholder="e.g., City, Forest, Ruin"></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>History</label><textarea name="history" rows="4"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Place</span></button></form></div></template>
     <template id="creature-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Creature Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Mammal, Mythical"></div><div><label>Habitat</label><select name="habitat"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="4"></textarea></div><div class="form-grid-span-2"><label>Abilities</label><textarea name="abilities" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Creature</span></button></form></div></template>
     <template id="item-form-template"><div class="form-wrapper"><div class="form-header"><h2></h2><button class="modal-close-btn"><i data-feather="x"></i></button></div><form class="entity-form"><input type="hidden" name="id"><input type="hidden" name="imageData"><div class="form-grid"><div class="image-uploader"><label>Item Image</label><div class="image-preview-wrapper"><img class="image-preview"><div class="image-upload-prompt"><span>Click to upload</span></div></div><input type="file" class="file-input" accept="image/*"></div><div class="form-grid-span-2"><label>Name</label><input type="text" name="name" required></div><div><label>Type</label><input type="text" name="type" placeholder="e.g., Weapon, Potion, Key"></div><div><label>Current Holder</label><select name="holder"></select></div><div class="form-grid-span-2"><label>Description</label><textarea name="description" rows="3"></textarea></div><div class="form-grid-span-2"><label>Properties/Abilities</label><textarea name="properties" rows="3"></textarea></div></div><button type="submit" class="save-btn"><i data-feather="save"></i><span>Save Item</span></button></form></div></template>
@@ -361,46 +369,18 @@ window.addEventListener('beforeinstallprompt', (e) => {
         };
 
         // --- Core Functions ---
-        // --- New IndexedDB Functions ---
-
-let db; // This will hold our database connection.
-
-// This function sets up and opens the database.
-async function initDB() {
-    db = await idb.openDB('StoryWeaverDB', 1, {
-        upgrade(db) {
-            // Create a 'store' for our main story data (arcs, characters, etc.)
-            db.createObjectStore('storyData', { keyPath: 'id' });
-            
-            // Create a separate 'store' just for image files
-            db.createObjectStore('images');
-        },
-    });
-}
-
-// New function to save the main database object
-async function saveDatabase() {
-    if (!db) return;
-    await db.put('storyData', { id: 'main', data: database });
-    // We no longer save API keys here, that stays in localStorage
-    localStorage.setItem('geminiApiKey', geminiApiKey);
-    localStorage.setItem('selectedModel', selectedModel);
-}
-
-// New function to load the main database object
-async function loadDatabase() {
-    if (!db) return;
-    const dbData = await db.get('storyData', 'main');
-    if (dbData) {
-        database = dbData.data;
-    } else {
-        database = { arcs: {} }; // Initialize if empty
-    }
-    
-    // API keys can still be loaded from localStorage
-    geminiApiKey = localStorage.getItem('geminiApiKey') || '';
-    selectedModel = localStorage.getItem('selectedModel') || 'gemini-2.5-flash-preview-05-20';
-}
+        const loadDatabase = () => {
+            database = JSON.parse(localStorage.getItem('worldBuilderDB')) || { arcs: {} };
+            geminiApiKey = localStorage.getItem('geminiApiKey') || '';
+            selectedModel = localStorage.getItem('selectedModel') || 'gemini-2.5-flash-preview-05-20';
+            apiKeyInput.value = geminiApiKey;
+            modelSelect.value = selectedModel;
+        };
+        const saveDatabase = () => {
+            localStorage.setItem('worldBuilderDB', JSON.stringify(database));
+            localStorage.setItem('geminiApiKey', geminiApiKey);
+            localStorage.setItem('selectedModel', selectedModel);
+        };
         const openModal = (contentNode) => {
             modalContent.innerHTML = '';
             modalContent.appendChild(contentNode);
@@ -415,63 +395,46 @@ async function loadDatabase() {
             textarea.style.height = `${textarea.scrollHeight}px`; 
         };
 
-        // Replace your setupImageUploader function with this
+        // REPLACE your old setupImageUploader function with this new one
+
 const setupImageUploader = (form) => {
-    const uploader = form.querySelector('.image-uploader');
-    if (!uploader) return;
-    
-    const previewWrapper = uploader.querySelector('.image-preview-wrapper');
-    const previewImg = uploader.querySelector('.image-preview');
-    const fileInput = uploader.querySelector('.file-input');
-    // We no longer use a hidden input for base64 data
-    
-    // Instead of a data URL, we use a reference ID for the image
-    const imageIdInput = form.querySelector('input[name="imageData"]'); 
-    if (imageIdInput.value) {
-        db.get('images', imageIdInput.value).then(imageBlob => {
-            if (imageBlob) {
-                previewImg.src = URL.createObjectURL(imageBlob);
+    const fileInput = form.querySelector('input[name="imageUpload"]');
+    const previewContainer = form.querySelector('#image-preview');
+    const imageDataInput = form.querySelector('input[name="imageData"]');
+
+    if (!fileInput || !previewContainer || !imageDataInput) return;
+
+    // Display existing images when editing
+    if (imageDataInput.value) {
+        const urls = imageDataInput.value.split(',');
+        urls.forEach(url => {
+            if (url) {
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = 'w-full h-auto object-cover rounded-md';
+                previewContainer.appendChild(img);
             }
         });
-    } else {
-        previewImg.src = PLACEHOLDER_IMG;
     }
-    
-    previewWrapper.addEventListener('click', () => fileInput.click());
 
+    // Your new preview logic is here
     fileInput.addEventListener('change', () => {
-        const file = fileInput.files[0];
-        if (!file) return;
+        previewContainer.innerHTML = ''; // Clear previous previews
+        const files = fileInput.files;
 
-        const MAX_WIDTH = 800, MAX_HEIGHT = 800, QUALITY = 0.8;
-        const blobURL = URL.createObjectURL(file);
-        const img = new Image();
-        img.src = blobURL;
-        img.onerror = () => URL.revokeObjectURL(this.src);
-        img.onload = () => {
-            URL.revokeObjectURL(this.src);
-            let { width, height } = img;
-            if (width > height) {
-                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-            } else {
-                if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-            }
-            const canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            // Convert to a Blob instead of Base64
-            canvas.toBlob(async (blob) => {
-                const imageId = `img_${Date.now()}`; // Create a unique ID for the image
-                await db.put('images', blob, imageId); // Save the blob in IndexedDB
-                
-                // Save the ID in the form, not the image data
-                imageIdInput.value = imageId; 
-                previewImg.src = URL.createObjectURL(blob);
-            }, "image/jpeg", QUALITY);
-        };
+        if (files.length > 5) {
+            alert("You can upload a maximum of 5 images.");
+            fileInput.value = ""; // Clear the selection
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.className = 'w-full h-auto object-cover rounded-md';
+            previewContainer.appendChild(img);
+        }
     });
 };
 
@@ -630,51 +593,51 @@ const setupImageUploader = (form) => {
             renderTabContent('characters');
         };
 
-        // Replace your renderTabContent function with this
-const renderTabContent = (type) => {
-    arcContent.innerHTML = '';
-    document.querySelectorAll('#arc-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.type === type));
-    const config = ENTITY_CONFIG[type];
-    if (!config) return;
+        const renderTabContent = (type) => {
+            arcContent.innerHTML = '';
+            document.querySelectorAll('#arc-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.type === type));
+            const config = ENTITY_CONFIG[type];
+            if (!config) return;
 
-    const items = database.arcs[currentArcId]?.[type] || {};
-    // ... (rest of the function header remains the same)
+            const items = database.arcs[currentArcId][type] || {};
+            const header = document.createElement('div');
+            header.innerHTML = `<button class="create-new-entity-btn" data-type="${type}"><i data-feather="plus"></i> Create New ${config.title}</button>`;
+            arcContent.appendChild(header);
 
-    const listContainer = document.createElement('div');
-    listContainer.className = (type === 'timeline') ? 'flex flex-col gap-4' : 'entity-list';
-    
-    if (Object.keys(items).length === 0) {
-        listContainer.innerHTML = `<div class="empty-state col-span-full"><i data-feather="search"></i><p>No ${type} found.</p></div>`;
-    } else {
-        const cardTemplate = document.getElementById(`${config.singular}-card-template`);
-        Object.values(items).forEach(item => {
-            const cardClone = cardTemplate.content.cloneNode(true);
-            const cardEl = cardClone.firstElementChild;
-            // ... (rest of the card setup for buttons/ids remains the same)
-
-            if (type !== 'timeline') {
-                const imgEl = cardEl.querySelector('.entity-card-img');
-                imgEl.src = PLACEHOLDER_IMG; // Set placeholder initially
-                
-                // If there's an image ID, fetch the blob from IndexedDB
-                if (item.imageData) {
-                    db.get('images', item.imageData).then(imageBlob => {
-                        if (imageBlob) {
-                            // Create a temporary URL from the blob and set it as the src
-                            imgEl.src = URL.createObjectURL(imageBlob);
-                        }
-                    });
-                }
-                cardEl.querySelector('.entity-card-name').textContent = item.name;
+            const listContainer = document.createElement('div');
+            listContainer.className = (type === 'timeline') ? 'flex flex-col gap-4' : 'entity-list';
+            if (Object.keys(items).length === 0) {
+                listContainer.innerHTML = `<div class="empty-state col-span-full"><i data-feather="search"></i><p>No ${type} found. Click the button above to create one!</p></div>`;
             } else {
-                // ... (timeline rendering logic remains the same)
+                const cardTemplate = document.getElementById(`${config.singular}-card-template`);
+                Object.values(items).forEach(item => {
+                    const cardClone = cardTemplate.content.cloneNode(true);
+                    const cardEl = cardClone.firstElementChild;
+                    cardEl.dataset.id = item.id;
+                    cardEl.querySelector('.edit-entity-btn').dataset.id = item.id;
+                    cardEl.querySelector('.edit-entity-btn').dataset.type = type;
+                    cardEl.querySelector('.delete-entity-btn').dataset.id = item.id;
+                    cardEl.querySelector('.delete-entity-btn').dataset.type = type;
+
+                    if (type !== 'timeline') {
+                        cardEl.querySelector('.entity-card-img').src = item.imageData || PLACEHOLDER_IMG;
+                        cardEl.querySelector('.entity-card-name').textContent = item.name;
+                    } else {
+                        cardEl.querySelector('.timeline-date').textContent = item.date || 'N/A';
+                        cardEl.querySelector('.timeline-title').textContent = item.title;
+                        cardEl.querySelector('.timeline-description').textContent = item.description;
+                        const metaEl = cardEl.querySelector('.timeline-meta');
+                        let metaHTML = '';
+                        if (item.location) metaHTML += `<div><strong>Location:</strong> ${item.location}</div>`;
+                        if (item.participants && item.participants.length > 0) metaHTML += `<div><strong>Participants:</strong> ${item.participants.join(', ')}</div>`;
+                        metaEl.innerHTML = metaHTML;
+                    }
+                    listContainer.appendChild(cardClone);
+                });
             }
-            listContainer.appendChild(cardClone);
-        });
-    }
-    arcContent.appendChild(listContainer);
-    feather.replace();
-};
+            arcContent.appendChild(listContainer);
+            feather.replace();
+        };
 
         const renderForm = (type, entityId = null) => {
             const config = ENTITY_CONFIG[type];
@@ -838,29 +801,32 @@ const renderTabContent = (type) => {
         };
 
         // --- Combined Initialization ---
-        // --- Combined Initialization ---
-const init = async () => { // Make the function async
-    await initDB(); // Wait for the database to be ready first
-    await loadDatabase(); // Now load the data from it
-    
-    // The rest of your init function...
-    document.addEventListener('click', handleAppClick);
-    document.addEventListener('submit', handleAppSubmit);
-    
-    sendBtn.addEventListener('click', handleSend);
-    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
-    chatInput.addEventListener('input', () => autoResizeTextarea(chatInput));
-    fileInput.addEventListener('change', handleFileSelect);
+        const init = () => {
+            document.addEventListener('click', handleAppClick);
+            document.addEventListener('submit', handleAppSubmit);
+            
+            sendBtn.addEventListener('click', handleSend);
+            chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
+            chatInput.addEventListener('input', () => autoResizeTextarea(chatInput));
+            fileInput.addEventListener('change', handleFileSelect);
+            saveSettingsBtn.addEventListener('click', () => {
+                geminiApiKey = apiKeyInput.value.trim();
+                selectedModel = modelSelect.value;
+                saveDatabase();
+                settingsModal.classList.add('hidden');
+                addMessage('ai', 'Settings saved successfully.');
+            });
 
-    renderDashboard();
-    feather.replace();
-    
-    if (chatMessages.children.length === 0) {
-         addMessage('ai', 'Hello! How can I assist you today? You can ask me questions, request to generate an image by starting your prompt with <code class="bg-gray-900 px-1 py-0.5 rounded text-indigo-400">/imagine</code>, or upload an image to discuss.');
-    }
-};
+            loadDatabase();
+            renderDashboard();
+            feather.replace();
+            
+            if (chatMessages.children.length === 0) {
+                 addMessage('ai', 'Hello! How can I assist you today? You can ask me questions, request to generate an image by starting your prompt with <code class="bg-gray-900 px-1 py-0.5 rounded text-indigo-400">/imagine</code>, or upload an image to discuss.');
+            }
+        };
 
-init(); // Call the async init function
+        init();
     });
 
     
