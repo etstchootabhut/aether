@@ -74,6 +74,35 @@
         .image-uploader .image-upload-prompt { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s; }
         .image-uploader .image-preview-wrapper:hover .image-upload-prompt { opacity: 1; }
         .file-input { display: none; }
+
+/* Media query for mobile screen adjustments */
+@media (max-width: 768px) {
+    /* Make the grid columns smaller to fit more cards */
+    .entity-list {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem; /* Slightly reduce the gap between cards */
+    }
+
+    /* Reduce the font size and padding of the name inside the card */
+    .entity-card-name {
+        font-size: 0.875rem; /* 14px */
+        padding: 0.75rem;
+    }
+
+    /* Make the action buttons on the card smaller */
+    .entity-card .card-actions {
+        gap: 0.25rem;
+    }
+    .entity-card .card-actions button {
+        padding: 0.4rem;
+    }
+    .entity-card .card-actions button svg {
+        width: 14px;
+        height: 14px;
+    }
+    #new-arc-btn:hover {padding: 0.3rem;}
+    #ai-chat-btn {padding: 0.3rem;}
+}
         
         /* Fix for Timeline Event Cards */
 .timeline-event-card {
